@@ -1,0 +1,55 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="ja">
+<head>
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8">
+    <title></title>
+    <link href="css/jquery.treeTable.css" rel="stylesheet" type="text/css" />
+    <link href="css/style.css" rel="stylesheet" type="text/css" />
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.0/jquery.min.js"></script>
+    <script type="text/javascript" src="js/jquery.treeTable.js"></script>
+    <script type="text/python" src="main.py"></script>
+    <script type="text/javascript">
+        $(function(){
+            /* initialize explorer */
+            var explorer = ExVimFileExplorer();
+            explorer.listup($("#targetPath").val());
+            $("#filer").treeTable();
+
+            /* mousedown to highlight */
+            $("#filer tbody tr").live("mousedown", function() {
+                $("tr.selected").removeClass("selected");
+                $(this).addClass("selected");
+                $("#targetPath").val($("span", this).last().attr("title"));
+            });
+
+            /* dblclick to load file */
+            $("#filer tbody tr").live("dblclick", function() {
+                var span = $("span", this).last()
+                if (span.hasClass("folder")) {
+                    explorer.listup($("#targetPath").val());
+                    $("#filer").treeTable();
+                } else {
+                    explorer.loadFile(span.attr("title"));
+                }
+            });
+
+            /* press ENTER to change directory */
+            $("#targetPath").keypress(function(e) {
+                if ((e.which && e.which === 13) || (e.keyCode && e.keyCode === 13)) {
+                    explorer.listup($("#targetPath").val());
+                    $("#filer").treeTable();
+                    return false;
+                }
+            });
+        });
+    </script>
+</head>
+<body>
+
+    <input id="targetPath" name="targetPath" type="text" />
+    <div id="filerWrap">
+        <table id="filer"><tbody id="result"></tbody></table>
+    </div>
+
+</body>
+</html>
